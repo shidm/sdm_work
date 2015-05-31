@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyTest</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_appRefrsh">app更新</string>
+    <string name="my_name">石头</string>
+    <string name="login_name">登陆</string>
+</resources>
