@@ -52,10 +52,10 @@ public class MainActivity extends FragmentActivity {
         init();
     }
 
-    private void openService() {
-        Intent uintent = new Intent(this,MyIntentService.class);
-        startService(uintent);
-    }
+//    private void openService() {
+//        Intent uintent = new Intent(this,MyIntentService.class);
+//        startService(uintent);
+//    }
 
     private void it() {
         tv1 = (TextView) findViewById(R.id.tv1);
@@ -77,7 +77,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void init() {
-        openService();
+//        openService();
         viewPager = (ViewPager) findViewById(R.id.myViewPager);
         fg1 = new PagerFragment1();
         fg2 = new PagerFragment2();

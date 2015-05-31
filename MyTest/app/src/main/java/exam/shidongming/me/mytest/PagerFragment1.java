@@ -43,6 +43,7 @@ import java.util.List;
 
 public class PagerFragment1 extends Fragment implements MyListView.ILoadListener {
 
+    private static boolean sd;
     private MyListViewAdapter mAdapter;
     public static List mList = new ArrayList();
     private List myList = new ArrayList();
@@ -57,8 +58,9 @@ public class PagerFragment1 extends Fragment implements MyListView.ILoadListener
 
     int a=0;
 
-    public static void getImageList(List list){
+    public static void getImageList(List list,boolean x){
         mList = list;
+        sd = x;
     }
 
     @Override
@@ -112,7 +114,7 @@ public class PagerFragment1 extends Fragment implements MyListView.ILoadListener
                 }
                 mAdapter.notifyDataSetChanged();
             }
-        }, 2000);
+        }, 1000);
 
         return view;
     }

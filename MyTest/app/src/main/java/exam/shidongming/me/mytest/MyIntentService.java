@@ -76,8 +76,6 @@ public class MyIntentService extends IntentService {
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
-                        PagerFragment1.getImageList(mlist);
-                        PagerFragment2.getContentList(mylist);
                     }
                 }.execute(url);
             };
@@ -117,6 +115,8 @@ public class MyIntentService extends IntentService {
                 GetImageOrContent myGetImageOrContent = new GetImageOrContent(title, time
                         , dz, cp, tc, bm,0, null);
                 mlist.add(myGetImageOrContent);
+                PagerFragment1.getImageList(mlist,true);
+                PagerFragment2.getContentList(mylist,true);
             }
         } catch (JSONException e) {
             e.printStackTrace();

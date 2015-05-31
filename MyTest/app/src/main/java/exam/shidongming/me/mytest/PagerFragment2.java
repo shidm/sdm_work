@@ -34,6 +34,7 @@ import java.util.List;
 public class PagerFragment2 extends Fragment implements MyListView.ILoadListener {
 
     private static List mList;
+    private static boolean sd;
     private MyListViewAdapter myAdapter;
     private List myList = new ArrayList();
     private MyListView listView;
@@ -54,10 +55,11 @@ public class PagerFragment2 extends Fragment implements MyListView.ILoadListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment2,container,false);
+        view = inflater.inflate(R.layout.fragment2, container, false);
         listView = (MyListView) view.findViewById(R.id.tv_ListView);
         listView.setInterface(this);
         listView.setAdapter(myAdapter);
+
         listView.setonRefreshListener(new MyListView.OnRefreshListener() {
 
             @Override
@@ -71,7 +73,7 @@ public class PagerFragment2 extends Fragment implements MyListView.ILoadListener
                         listView.onRefreshComplete();
                         myAdapter.notifyDataSetChanged();
                     }
-                }, 3000);
+                }, 2000);
             }
         });
 
@@ -97,12 +99,13 @@ public class PagerFragment2 extends Fragment implements MyListView.ILoadListener
                 }
                 myAdapter.notifyDataSetChanged();
             }
-        }, 2000);
+        }, 1000);
         return view;
     }
 
-    public static void getContentList(List list){
+    public static void getContentList(List list,boolean x){
         mList = list;
+        sd = x;
     }
 
     @Override
