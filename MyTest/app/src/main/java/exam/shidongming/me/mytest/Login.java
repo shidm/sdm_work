@@ -28,7 +28,6 @@ public class Login extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        openService();
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         zh = (EditText) findViewById(R.id.zh);
         mm = (EditText) findViewById(R.id.mm);
@@ -46,11 +45,6 @@ public class Login extends Activity implements View.OnClickListener {
             mm.setText(mmm);
             remember_password.setChecked(true);
         }
-    }
-
-    private void openService() {
-        Intent uintent = new Intent(this,MyIntentService.class);
-        startService(uintent);
     }
 
     @Override

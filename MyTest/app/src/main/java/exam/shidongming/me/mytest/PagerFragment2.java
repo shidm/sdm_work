@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,7 +25,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,47 +40,35 @@ import java.util.List;
 
 public class PagerFragment2 extends Fragment implements MyListView.ILoadListener {
 
-    private static List mList;
-    private static boolean sd;
     private MyListViewAdapter myAdapter;
     private List myList = new ArrayList();
     private MyListView listView;
-    private String theContent1,theContent,theContent2;
-    private Handler handler = new Handler();
     private Handler mHandler = new Handler();
+    final String[] url = new String[]{"http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=1"
+            ,"http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=2"
+            , "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=3"
+            , "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=4",
+            "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=5"};
 
     int a =0;
 
     private View view;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        it();
-        myAdapter = new MyListViewAdapter(activity,R.layout.lv_item1,myList,false);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment2, container, false);
         listView = (MyListView) view.findViewById(R.id.tv_ListView);
+        myAdapter = new MyListViewAdapter(getActivity(),R.layout.lv_item1,myList,false);
         listView.setInterface(this);
         listView.setAdapter(myAdapter);
-
+        init();
         listView.setonRefreshListener(new MyListView.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < mList.size(); i++) {
-                            myList.add(mList.get(i));
-                        }
-                        listView.onRefreshComplete();
-                        myAdapter.notifyDataSetChanged();
-                    }
-                }, 2000);
+                listView.onRefreshComplete();
+                init();
             }
         });
 
@@ -91,66 +86,58 @@ public class PagerFragment2 extends Fragment implements MyListView.ILoadListener
                 fragmentTransaction.commit();
             }
         });
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < mList.size(); i++) {
-                    myList.add(mList.get(i));
-                }
-                myAdapter.notifyDataSetChanged();
-            }
-        }, 1000);
         return view;
-    }
-
-    public static void getContentList(List list,boolean x){
-        mList = list;
-        sd = x;
     }
 
     @Override
     public void onLoad() {
-        final String[] url = new String[]{"http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=2"
-                , "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=3"
-                , "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=4",
-                "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=5"};
+        init();
+        listView.loadComplete();
+    }
 
-        if (a < 4) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    new AsyncTask<String, Integer, Void>() {
+    private void init(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new AsyncTask<String, Integer, Void>() {
 
-                        @Override
-                        protected Void doInBackground(String... params) {
-                            String Url = params[a];
-                            HttpClient httpClient = new DefaultHttpClient();
-                            HttpGet httpGet = new HttpGet(Url);
-                            HttpResponse httpResponse = null;
-                            try {
-                                httpResponse = httpClient.execute(httpGet);
-                                if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                                    HttpEntity httpEntity = httpResponse.getEntity();
-                                    final String read = EntityUtils.toString(httpEntity, "utf-8");
-                                    parseJson(read);
-                                    a++;
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                    @Override
+                    protected Void doInBackground(String... params) {
+                        String Url = params[a];
+                        HttpURLConnection connection = null;
+                        try {
+                            URL url1 = new URL(Url);
+                            connection = (HttpURLConnection) url1.openConnection();
+                            connection.setRequestMethod("GET");
+                            connection.setConnectTimeout(2000);
+                            connection.setReadTimeout(2000);
+                            InputStream inputStream = connection.getInputStream();
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                            StringBuilder builder = new StringBuilder();
+                            String line = null;
+                            if((line = reader.readLine())!=null){
+                                builder.append(line);
                             }
-                            return null;
-                        }
 
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            super.onPostExecute(aVoid);
-                            myAdapter.notifyDataSetChanged();
-                            listView.loadComplete();
+                            String s = builder.toString();
+                            parseJson(s);
+                            a++;
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    }.execute(url);
-                }
-            }).start();
-        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        myAdapter.notifyDataSetChanged();
+                    }
+                }.execute(url);
+            }
+        }).start();
     }
 
     private void parseJson(String jsonData){

@@ -82,19 +82,6 @@ public class MyIntentService extends IntentService {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-//                            HttpClient httpClient = new DefaultHttpClient();
-//                            HttpGet httpGet = new HttpGet(Url);
-//                            HttpResponse httpResponse = null;
-//                            try {
-//                                httpResponse = httpClient.execute(httpGet);
-//                                if (httpResponse.getStatusLine().getStatusCode() == 200) {
-//                                    HttpEntity httpEntity = httpResponse.getEntity();
-//                                    final String read = EntityUtils.toString(httpEntity, "utf-8");
-//                                    parseJson(read);
-//                                }
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
                         }
                         return null;
                     }
@@ -141,8 +128,6 @@ public class MyIntentService extends IntentService {
                 GetImageOrContent myGetImageOrContent = new GetImageOrContent(title, time
                         , dz, cp, tc, bm,0, null);
                 mlist.add(myGetImageOrContent);
-                PagerFragment1.getImageList(mlist,true);
-                PagerFragment2.getContentList(mylist,true);
             }
         } catch (JSONException e) {
             e.printStackTrace();

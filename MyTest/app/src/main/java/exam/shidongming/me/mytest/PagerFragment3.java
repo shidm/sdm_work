@@ -3,6 +3,7 @@ package exam.shidongming.me.mytest;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,32 +19,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PagerFragment3 extends Fragment  {
+public class PagerFragment3 extends Fragment implements MyListView.ILoadListener {
 
     private View view;
     private MyListViewAdapter myAdapter;
     private List myList = new ArrayList();
     private MyListView listView;
+    private Handler handler = new Handler();
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        readContacts(activity);
-        myAdapter = new MyListViewAdapter(activity,R.layout.lv_item1,myList,false);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment3,container,false);
         listView = (MyListView) view.findViewById(R.id.my_dhb);
+        myAdapter = new MyListViewAdapter(getActivity(),R.layout.lv_item1,myList,false);
         listView.setAdapter(myAdapter);
+        readContacts(getActivity());
         listView.setonRefreshListener(new MyListView.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listView.onRefreshComplete();
+                    }
+                }, 3000);
 
-                listView.onRefreshComplete();
-                myAdapter.notifyDataSetChanged();
             }
         });
 
@@ -64,6 +66,11 @@ public class PagerFragment3 extends Fragment  {
         return view;
     }
 
+    @Override
+    public void onLoad() {
+        listView.loadComplete();
+    }
+
     private void readContacts(Activity activity){
 
         Cursor cursor = null;
@@ -81,6 +88,7 @@ public class PagerFragment3 extends Fragment  {
                 GetImageOrContent gioc = new GetImageOrContent(name,time,"电话","就是电话","妈蛋",null,0,number);
                 myList.add(gioc);
             }
+            myAdapter.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();
         }finally {

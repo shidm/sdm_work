@@ -27,8 +27,6 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
-    private long exitTime = 0;
-
     private ViewPager viewPager;
 
     private TextView tv1,tv2,tv3;
@@ -50,12 +48,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         it();
         init();
+        Toast.makeText(this,"请稍候片刻，正在加载内容",Toast.LENGTH_SHORT).show();
     }
-
-//    private void openService() {
-//        Intent uintent = new Intent(this,MyIntentService.class);
-//        startService(uintent);
-//    }
 
     private void it() {
         tv1 = (TextView) findViewById(R.id.tv1);
@@ -77,7 +71,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void init() {
-//        openService();
         viewPager = (ViewPager) findViewById(R.id.myViewPager);
         fg1 = new PagerFragment1();
         fg2 = new PagerFragment2();
