@@ -49,13 +49,10 @@ public class PagerFragment1 extends Fragment implements MyListView.ILoadListener
     private List myList = new ArrayList();
     private View view;
     private MyListView listView;
-
     private Handler handler = new Handler();
     private Handler mHandler = new Handler();
-
     private ScrollView scrollView;
     private ImageView imView;
-
     int a=0;
 
     public static void getImageList(List list,boolean x){

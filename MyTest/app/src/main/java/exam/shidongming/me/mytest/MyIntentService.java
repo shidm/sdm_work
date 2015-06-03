@@ -19,8 +19,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -56,19 +60,41 @@ public class MyIntentService extends IntentService {
                                 isContent=false;
                             }
                             String Url = params[i];
-                            HttpClient httpClient = new DefaultHttpClient();
-                            HttpGet httpGet = new HttpGet(Url);
-                            HttpResponse httpResponse = null;
+                            HttpURLConnection connection = null;
                             try {
-                                httpResponse = httpClient.execute(httpGet);
-                                if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                                    HttpEntity httpEntity = httpResponse.getEntity();
-                                    final String read = EntityUtils.toString(httpEntity, "utf-8");
-                                    parseJson(read);
+                                URL url1 = new URL(Url);
+                                connection = (HttpURLConnection) url1.openConnection();
+                                connection.setRequestMethod("GET");
+                                connection.setConnectTimeout(2000);
+                                connection.setReadTimeout(2000);
+                                InputStream inputStream = connection.getInputStream();
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                                StringBuilder builder = new StringBuilder();
+                                String line = null;
+                                if((line = reader.readLine())!=null){
+                                    builder.append(line);
                                 }
+
+                                String s = builder.toString();
+                                parseJson(s);
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+//                            HttpClient httpClient = new DefaultHttpClient();
+//                            HttpGet httpGet = new HttpGet(Url);
+//                            HttpResponse httpResponse = null;
+//                            try {
+//                                httpResponse = httpClient.execute(httpGet);
+//                                if (httpResponse.getStatusLine().getStatusCode() == 200) {
+//                                    HttpEntity httpEntity = httpResponse.getEntity();
+//                                    final String read = EntityUtils.toString(httpEntity, "utf-8");
+//                                    parseJson(read);
+//                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                         return null;
                     }
